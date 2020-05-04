@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: {{ .Release.Namespace }}
+  labels:
+    service: redis
+spec:
+  type: ClusterIP
+  ports:
+    - name: "6379"
+      port: 6379
+      targetPort: 6379
+  selector:
+    service: redis
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: {{ .Release.Namespace }}
+  labels:
+    service: redis
+spec:
+  selector:
+    matchLabels:
+      service: redis
+  serviceName: redis
+  replicas: {{ .Values.redis.replicas }}
+  template:
+    metadata:
+      namespace: {{ .Release.Namespace }}
+      labels:
+        service: redis
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: redis
+          image: {{ .Values.redis.image }}
+          resources:
+            requests:
+              memory: "100Mi"
+          ports:
+            - containerPort: 6379
+              name: redis
+          volumeMounts:
+            - name: redis
+              mountPath: /data
+              subPath: redis
+      restartPolicy: Always
+  volumeClaimTemplates:
+    - metadata:
+        namespace: {{ .Release.Namespace }}
+        name: redis
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "standard-retain"
+        resources:
+          requests:
+            storage: {{ .Values.redis.storage }}

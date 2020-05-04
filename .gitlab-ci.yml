@@ -1,0 +1,21 @@
+include:
+  - project: 'merixstudio/pts/pipelines'
+    ref: 'master'
+    file: '/Pipeline.gitlab-ci.yml'
+
+lint:
+  image: "${REPOSITORY_URL}/app:${BUILD_NUMBER}"
+  variables:
+    LINT_WORKDIR: /project/app
+    LINT_COMMAND: docker/entrypoint.sh lint
+
+test:
+  image: "${REPOSITORY_URL}/app:${BUILD_NUMBER}"
+  variables:
+    TEST_WORKDIR: /project/app
+    TEST_COMMAND: docker/entrypoint.sh test
+
+build:
+  variables:
+    IMAGE_NAME: app
+    DOCKERFILE: docker/Dockerfile

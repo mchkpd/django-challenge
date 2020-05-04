@@ -1,0 +1,34 @@
+version: '3.4'
+x-common: &common
+  image: ${IMAGE_REPO}:${RELEASE}
+  env_file: .env-deploy
+  networks:
+    - default
+  dns:
+    - 8.8.8.8
+services:
+  django:
+    <<: *common
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    ports:
+      - '1025:8000'
+    command: uwsgi
+  bootstrap:
+    <<: *common
+    command: manage bootstrap
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 10
+  celery:
+    <<: *common
+    command: celery
+  celerybeat:
+    <<: *common
+    command: beat
+networks:
+  default:
+    driver: overlay

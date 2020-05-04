@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: celery
+  name: celery
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.celery.replicas }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      service: celery
+  template:
+    metadata:
+      labels:
+        service: celery
+    spec:
+      securityContext:
+        fsGroup: 101 # django group
+      containers:
+        - args: ["celery"]
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: env
+          image: {{ .Values.app.image }}
+          name: celery
+          resources:
+            requests:
+              memory: "400Mi"
+          volumeMounts:
+            - mountPath: /project/static
+              name: static
+            - mountPath: /project/media
+              name: media
+      restartPolicy: Always
+      volumes:
+        - name: static
+          persistentVolumeClaim:
+            claimName: static
+        - name: media
+          persistentVolumeClaim:
+            claimName: media
+      nodeSelector:
+        node-type: preemptible
+      tolerations:
+        - key: node-type
+          operator: Equal
+          value: preemptible
+          effect: NoSchedule

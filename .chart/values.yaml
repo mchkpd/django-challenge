@@ -1,0 +1,23 @@
+app:
+  port: 8000
+  replicas: 1
+  static:
+    storage: 100Mi
+  media:
+    storage: 100Mi
+
+postgres:
+  image: postgres:10.7-alpine
+  replicas: 1
+  storage: 1Gi
+
+redis:
+  image: redis:5.0.3-alpine
+  replicas: 1
+  storage: 100Mi
+
+celery:
+  replicas: 1
+
+celerybeat:
+  replicas: 1
