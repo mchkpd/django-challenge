@@ -35,6 +35,7 @@ INSTALLED_APPS = (
     "djoser",
     "config",
     "example_app",
+    "challenges",
 )
 
 MIDDLEWARE = (
