@@ -14,6 +14,7 @@ pytz
 sentry-sdk
 django<3.0,>=2.2
 pyuwsgi
+pillow
 
 # dev
 black==18.9b0
