@@ -1,5 +1,7 @@
 from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.utils import timezone
 
@@ -16,8 +18,10 @@ class Comment(models.Model):
 
 class Activity(models.Model):
     name = models.CharField(max_length=64)
-    #image = models.ImageField()
+    image = models.ImageField(upload_to='uploads/', null=True)
     factor = models.DecimalField(max_digits=5, decimal_places=2)
+    colors = ArrayField(models.CharField(max_length=16), null=True)
+    people = JSONField(null=True)
     comments = GenericRelation(Comment)
 
     class Meta:

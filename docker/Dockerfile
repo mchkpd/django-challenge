@@ -11,6 +11,7 @@ ENV PYTHONUSERBASE=$PYROOT \
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         libxml2 \
+        libjpeg-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN PIP_USER=1 pip install --upgrade pip'>=9.2<9.3' pip-tools'>=4.0<4.1'
